@@ -4,6 +4,7 @@ import RecruitmentModel from "@/models/Recruitment";
 import { TempRecruitmentUserModel } from "@/models/Recruitment";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/requireAuth";
 import nodemailer from "nodemailer";
 
 // Email rotation system - 20 PointBlank email accounts
@@ -261,6 +262,8 @@ export async function POST(request: Request) {
     // if (!success) {
     //   return NextResponse.json({ error: "Too Many Requests" }, { status: 429 });
     // }
+    const { user, error } = await requireAuth(request);
+    if (error) return error;
 
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action");

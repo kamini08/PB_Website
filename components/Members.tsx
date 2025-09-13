@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaRegBell } from "react-icons/fa";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/Firebase";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import Card from "./ui/Card";
 import CollapsibleSection from "./ui/CollapsibleSection";
 import { useStore } from "@/lib/zustand/store";
 import LoadingBrackets from "@/components/ui/loading-brackets";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface Member {
   id?: string;
@@ -106,7 +107,7 @@ export default function Members() {
         formData.append("file", image as Blob);
         formData.append("name", newMember.name);
         try {
-          const response = await fetch("/api/membersData/upload", {
+          const response = await apiFetch("/api/membersData/upload", {
             method: "POST",
             body: formData,
           });
@@ -133,7 +134,7 @@ export default function Members() {
       if (newMember.id) {
         // Update member in Firestore
         try {
-          const response = await fetch(`/api/membersData`, {
+          const response = await apiFetch(`/api/membersData`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -157,7 +158,7 @@ export default function Members() {
       } else {
         // Add new member to Firestore
         try {
-          const response = await fetch("/api/membersData", {
+          const response = await apiFetch("/api/membersData", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -213,7 +214,7 @@ export default function Members() {
 
   const handleDeleteMember = async (id: string) => {
     try {
-      const response = await fetch("/api/membersData", {
+      const response = await apiFetch("/api/membersData", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -307,11 +308,11 @@ export default function Members() {
                 key={index}
                 heading={heading}
                 content={
-                  <div className="flex justify-center">
-                    {/* {heading === "First Year" && (
-                      <div className="bg-gray-900 text-white p-4 rounded-lg shadow-lg flex items-center space-x-9 lg:w-7/12 justify-center">
+                  <div className="flex flex-col items-center space-y-6 w-full">
+                    {heading === "First Year" && (
+                      <div className="bg-gray-900 text-white p-4 rounded-lg shadow-lg flex items-center space-x-9 lg:w-7/12 justify-center cursor-pointer" onClick={() => window.location.href = '/recruitment'}>
                         <p className="text-xl font-bold lg:text-2xl text-center">
-                          Recruitment Incoming Soon!
+                          Register for Recruitment
                         </p>
                         <FaRegBell
                           className="text-[#00C853] text-2xl"
@@ -340,7 +341,7 @@ export default function Members() {
                           }
                         `}</style>
                       </div>
-                    )} */}
+                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
                       {data[heading]?.map((profile, cardIndex) => (
                         <div key={cardIndex} className="relative">
